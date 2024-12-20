@@ -1,34 +1,29 @@
 Name: Kian Kolahdoozan
 Matr.-Nr.: 46824
-Projekt: 
-Korrekte wissenschaftliche Vorgehensweise 
-(Grundlegend verwendete Literatur aufgezeigt, Wenn Einsatz KI: Zitiert) 
-Überblick Problemstellung & Beantwortung Fragen 
-(Grundlegender Überblick über Problemstellung und Vorgehensweise, beantwortung vorher festgelegter Fragen) 
-Dokumentation 
-(Wichtigste Stellen kommentiert, Code/Lösungsstrategie nachvollziehbar[roter Faden], Klassendiagramm oder Programmablaufplan vorhanden) 
-Code
 
 Problemstellung:
 
 Das Wedding Seating Problem befasst sich mit der Verteilung von Gästen auf eine begrenzte Menge an Sitzplätzen bei einer Hochzeit. Dabei sollen die Beziehungen der Gäste berücksichtigt werden, damit alle Freunde an einem Tisch sitzen und die Feinde an einem anderen Tisch.
-Das Ziel ist es, dass alle Gäste mit ihren Platz zufrieden sind und Konflikte zwischen Gästen verhindert werden.
+Das Ziel ist es, dass alle Gäste mit ihrem Platz zufrieden sind und Konflikte zwischen Gästen verhindert werden.
 Es ist ein Optimierungsproblem, bei welchem eine heuristische Lösung in Betracht kommt.
 
 Vorgehensweise:
 Die Datei mit den Gäste, Freunde und Feinde wird gelesen.
 Eine Relationshipmatrix wird anhand der Beziehungen erstellt.
-Die Liste mit den Gästen wird anhand der Anzahl der Beziehungen absteigend sotiert.
-Der Gast mit den meisten Beziehungen wird einem Tisch zugeordnet.
+Die Liste mit den Gästen wird anhand der Anzahl der Beziehungen absteigend sortiert.
+Der Gast mit dem meisten Beziehungen wird einem Tisch zugeordnet.
 Dann wird der Gast mit den zweitmeisten Beziehungen zugeordnet, unter der Bedingung, dass es kein Feind ist (no enemy).
 Wenn der Tisch voll mit Gästen ist, die keine Feinde sind, wird bei jedem Gast überprüft, ob all die Freunde auch an dem Tisch sitzen. Wenn ja, dann ist der Tisch mit den Gästen fertig belegt und der nächste Tisch wird mit Gästen belegt.
-Ich habe mich für MCV entschieden, da ich dachte, dass die mit den meisten Beziehung die größten Probleme bereiten, weshalb sie als erstes ein Platz bekommen. Dabei wird erstmal bei der Zuordnung nur darauf geachtet, dass keine Feinde zusammensitzen, da sie wie die Freunde auch eine hohe Anzahl an Beziehungen haben und deshalb weiter vorne in der Liste als neutrale Kanditaten.
-Dadurch sollte sich die Wahrscheinlichkeit erhöhen, dass Freunde zusammengesetzt werden. Mit der Nachbedingung, dass falls doch nicht alle Freunde zusammensitzen, wird kontrolliert
+Ich habe mich für MCV entschieden, da ich dachte, dass die mit den meisten Beziehung die größten Probleme bereiten, weshalb sie als Erstes einen Platz bekommen. Dabei wird erstmal bei der Zuordnung nur darauf geachtet, dass keine Feinde zusammensitzen, da sie wie die Freunde auch eine hohe Anzahl an Beziehungen haben und deshalb weiter vorne in der Liste als neutrale Kandidaten.
+Dadurch sollte sich die Wahrscheinlichkeit erhöhen, dass Freunde zusammengesetzt werden. Mit der Nachbedingung, dass falls doch nicht alle Freunde zusammensitzen und der Bedingung, dass kein Gast an ein Tisch zuweisen darf, wenn an einem anderen Tisch ein Freund sitzt, wird garantiert, dass Freunde immer zusammen sitzen.
 
-Im Nachhinein würde ich erst MRV und dann MCV zusammen nutzen, da es effizienter ist, den Gast mit den wenigsten Möglichkeiten als erstes zu setzen und dann die anderen, die mehr Auswahl haben. Eine Kombination der heuristischen Funktionen wäre sinnvoll, falls bei einer der heuristischen Funktion zwei gleiche Werte rauskommt und die Reihenfolge nicht klar ist. Da kann die zweite heuristische Funktion die genaue Reihenfolge besser ermitteln.
+Im Nachhinein würde ich erst MRV und dann MCV zusammen nutzen, da es effizienter ist, den Gast mit den wenigsten Möglichkeiten als Erstes zu setzen und dann die anderen, die mehr Auswahl haben. Eine Kombination der heuristischen Funktionen wäre sinnvoll, falls bei einer der heuristischen Funktionen zwei gleiche Werte rauskommen und die Reihenfolge nicht klar ist. Da kann die zweite heuristische Funktion die genaue Reihenfolge besser ermitteln.
 Mit nur MCV funktioniert es auch, aber im schlimmsten Fall probiert der Code alle Möglichkeiten aus, bis es (k)eine Lösung findet.
 
-Falls ein Paar in der txt-Datei als Freunde und als Feinde eingegeben wird, werden die nur als Feinde dargestellt. Bei der manuellen Eingabe wird die Beziehung übernohmen, die als letztes hinzugefügt wurde.
+Falls ein Paar in der txt-Datei als Freunde und als Feinde eingegeben wird, werden die nur als Feinde dargestellt. Bei der manuellen Eingabe wird die Beziehung übernommen, die als Letztes hinzugefügt wurde.
+
+Ich habe beim Testen des Codes gesehen, dass es bei zu vielen Freunden keine Zuordnung findet, obwohl eine Zuordnung möglich wäre. Die genaue Ursache für diesen Bug habe ich nicht gefunden. Stattdessen habe ich einen anderen Ansatz genommen, wo die Freunde als eine Gruppe gespeichert werden und die Gruppe zusammen auf einem Tisch platziert wird. Diesen Ansatz habe ich in der Datei "Programm2" gespeichert, für das Testen den einkommentierten Code in Program.cs kopieren und ausführen.
+In dem Ansatz wird MCV nicht mehr in dem ursprünglichen Ansatz genutzt, da die Anzahl der Beziehungen durch die Große der Gruppe ersetzt wird, wo aber die (freundlichen) Beziehungen eine Rolle spielen. Ich habe die folgenden Aufgaben nur für den Code in "Program.cs" beantwortet, weil das der ursprüngliche Code ist.
 
 Verwenden eines CSPs:
 1) Wie wird das CSP modelliert 
@@ -99,7 +94,7 @@ Fehlerfall je nach Fehlermeldung, sonst im Allgemeinen: Unable to seat all guest
 4)
 
 MCV
-Gäste werden nach der Anzahl ihrer Beziehungen (Freunde und Feinde) absteigend sortiert (FindMCV). Gäste mit den meisten Beziehungen (Constrains) werden zuerst gesetzt.
+Gäste werden nach der Anzahl ihrer Beziehungen (Freunde und Feinde) absteigend sortiert (GetMCVList). Gäste mit den meisten Beziehungen (Constrains) werden zuerst gesetzt.
 Was passiert wenn zwei gleich viele Beziehung haben? --> Testen
 
 

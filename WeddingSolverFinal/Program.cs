@@ -1,4 +1,9 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 public class WeddingSeatingSolver
 {
     private int numberTables;
@@ -178,7 +183,7 @@ public class WeddingSeatingSolver
             Console.WriteLine();
         }
     }
-
+    
     /// <summary>
     /// Assigns seating for guests based on their relationships, ensuring that friends are seated together and enemies are not.
     /// </summary>
@@ -188,7 +193,7 @@ public class WeddingSeatingSolver
     /// </exception>
     public void AssignSeating()
     {
-        var orderedGuests = FindMCV();       // Get the list of guest, ordered by the amount of relationships.
+        var orderedGuests = GetMCVList();       // Get the list of guest, ordered by the amount of relationships.
         foreach (var guest in orderedGuests)
         {
             if(GetFriends(guest.Item1).Count > seatsPerTable - 1)   // Checks if a guest has more friends than seats per table available
@@ -206,7 +211,7 @@ public class WeddingSeatingSolver
             Console.WriteLine("Seating arrangement found:");
         }
     }
-
+    
     /// <summary>
     /// Recursively attempts to assign seating for guests based on their relationships.
     /// </summary>
@@ -233,7 +238,7 @@ public class WeddingSeatingSolver
             {
                 tables[table].Add(currentGuest);
 
-                //PrintTables();
+                //PrintTables();                                    // To see the states
 
                 if (AssignSeatingHelper(orderedGuests, currentGuestIndex + 1))
                 {
@@ -314,7 +319,23 @@ public class WeddingSeatingSolver
                 return false; // Not enough seats for the guest and their friends.
             }
         }
-
+        
+        var friendslist = GetFriends(guests[guestIndex]);
+        for (int i = 0; i < tables.Count; i++)
+        {
+            if (i == table)
+            {
+                continue;
+            }
+            foreach (string friend in friendslist)
+            {
+                if (tables[i].Contains(friend))             // Checks if any of the guest's friends is already seated at a different table.
+                {
+                    return false;
+                }
+            }
+        }
+        
         foreach (string seatedGuest in tables[table])
         {
             int seatedIndex = guests.IndexOf(seatedGuest);
@@ -350,7 +371,7 @@ public class WeddingSeatingSolver
     /// Order the list by the number of relationships in descending order.
     /// </summary>
     /// <return>Return the ordered list of guests and their relationship counts.</return>
-    private List<(string, int)> FindMCV()
+    private List<(string, int)> GetMCVList()
     {
         // Count the number of relationships (friends and enemies) for each guest.
         List<(string Guest, int Count)> orderedGuests = new List<(string, int)>();
@@ -405,7 +426,6 @@ public class WeddingSeatingSolver
             solver.AddFriend("Clara", "Li");
             solver.AddFriend("Emma", "Thomas");
             solver.AddFriend("Roxy", "Bella");
-            //solver.AddFriend("Tom", "Jeff");
             solver.AddEnemy("Marco", "Tom");
             solver.AddEnemy("Marco", "Anna");
             solver.AddEnemy("Marco", "Daniel");
