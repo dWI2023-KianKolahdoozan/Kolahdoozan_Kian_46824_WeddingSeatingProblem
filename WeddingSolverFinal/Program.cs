@@ -66,7 +66,7 @@ public class WeddingSeatingSolver
         }
     }
     /// <summary>
-    /// Establishes a friendship relationship between two guests.
+    /// Establishes a friendship between two guests.
     /// </summary>
     /// <param name="name1">The name of the first guest.</param>
     /// <param name="name2">The name of the second guest.</param>
@@ -88,7 +88,7 @@ public class WeddingSeatingSolver
     }
 
     /// <summary>
-    /// Establishes a unfriendship relationship between two guests.
+    /// Establishes a hostile relationship between two guests.
     /// </summary>
     /// <param name="name1">The name of the first guest.</param>
     /// <param name="name2">The name of the second guest.</param>
@@ -112,7 +112,7 @@ public class WeddingSeatingSolver
     /// <summary>
     /// Loads guest data from a specified file, including guest names, friendships, and enmities.
     /// </summary>
-    /// <param name="fileName">The file path to load guest data from.</param>
+    /// <param name="fileName">The file name to load guest data from.</param>
     /// <exception cref="FileNotFoundException">Thrown when the specified file does not exist.</exception>
     /// <exception cref="ArgumentException">Thrown when the file does not have the required format or content.</exception>
     public void LoadFromFile(string fileName)
@@ -188,7 +188,7 @@ public class WeddingSeatingSolver
     /// </exception>
     public void AssignSeating()
     {
-        var orderedGuests = FindInfluencer();       // Get the list of guest, ordered by the amount of relationships.
+        var orderedGuests = FindMCV();       // Get the list of guest, ordered by the amount of relationships.
         foreach (var guest in orderedGuests)
         {
             if(GetFriends(guest.Item1).Count > seatsPerTable - 1)   // Checks if a guest has more friends than seats per table available
@@ -309,7 +309,7 @@ public class WeddingSeatingSolver
         }
         else
         {
-            if (tables[table].Count + GetFriendCount(guestIndex) > seatsPerTable)
+            if (tables[table].Count + GetFriendCount(guestIndex) > seatsPerTable) // ">" and not ">=" 
             {
                 return false; // Not enough seats for the guest and their friends.
             }
@@ -344,13 +344,13 @@ public class WeddingSeatingSolver
         }
         return friendCount;
     }
-
+    
     /// <summary>
     /// Create a list to store each guest and their number of relationships.
     /// Order the list by the number of relationships in descending order.
     /// </summary>
     /// <return>Return the ordered list of guests and their relationship counts.</return>
-    private List<(string, int)> FindInfluencer()
+    private List<(string, int)> FindMCV()
     {
         // Count the number of relationships (friends and enemies) for each guest.
         List<(string Guest, int Count)> orderedGuests = new List<(string, int)>();
@@ -367,8 +367,7 @@ public class WeddingSeatingSolver
             orderedGuests.Add((guests[i], count));
         }
 
-        // Order the list by the number of relationships
-        orderedGuests = orderedGuests.OrderByDescending(g => g.Count).ToList();
+        orderedGuests = orderedGuests.OrderByDescending(g => g.Count).ToList();  // Order the list by the number of relationships
         /*
         foreach (var guest in orderedGuests)
         {
@@ -376,7 +375,7 @@ public class WeddingSeatingSolver
         }*/
         return orderedGuests;
     }
-
+ 
     /// <summary>
     /// Shows all the tables with the seated guests in the console.
     /// </summary>
@@ -397,22 +396,22 @@ public class WeddingSeatingSolver
         List<string> guest = new List<string> { "Tom", "Anna", "Daniel", "John", "Mia", "Jeff", "Clara", "Roxy", "Mark", "Maria", "Bella", "Marco", "Mustafa", "Li", "Peter", "Emma", "Thomas" };
         try
         {
-            WeddingSeatingSolver solver = new WeddingSeatingSolver(4, 5, "guest_data.txt");
-            /*
+            WeddingSeatingSolver solver = new WeddingSeatingSolver(4, 5, guest); //"guest_data.txt"
+            
             //solver.AddFriend("Tom", "Daniel");
             solver.AddFriend("Tom", "John");
             solver.AddFriend("Tom", "Mia");
             solver.AddFriend("Tom", "Clara");
             solver.AddFriend("Clara", "Li");
             solver.AddFriend("Emma", "Thomas");
-            //solver.AddFriend("Roxy", "Bella");
+            solver.AddFriend("Roxy", "Bella");
             //solver.AddFriend("Tom", "Jeff");
             solver.AddEnemy("Marco", "Tom");
             solver.AddEnemy("Marco", "Anna");
             solver.AddEnemy("Marco", "Daniel");
             solver.AddEnemy("Marco", "John");
             solver.AddEnemy("Marco", "Mia");
-            //solver.AddEnemy("Marco", "Jeff");
+            solver.AddEnemy("Marco", "Jeff");
             //solver.AddEnemy("Marco", "Clara");
             //solver.AddEnemy("Marco", "Roxy");
             //solver.AddEnemy("Marco", "Mark");
@@ -423,7 +422,7 @@ public class WeddingSeatingSolver
             //solver.AddEnemy("Marco", "Peter");
             //solver.AddEnemy("Marco", "Emma");
             //solver.AddEnemy("Marco", "Thomas");
-            */
+            
 
             //solver.DisplayRelationshipMatrix();
             solver.AssignSeating();
@@ -435,3 +434,9 @@ public class WeddingSeatingSolver
         }
     }
 }
+
+/*
+ * Tom, Anna, Daniel, John, Mia, Jeff, Clara, Roxy, Mark, Maria, Bella, Marco, Mustafa, Li, Peter, Emma, Thomas
+    Tom & John, Tom & Mia, Tom & Clara, Clara & Li, Mark & Roxy
+    Marco & Anna, Marco & Tom, Marco & Daniel, Marco & Mark, Marco & Mustafa
+ */

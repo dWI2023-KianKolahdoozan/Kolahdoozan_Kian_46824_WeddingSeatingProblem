@@ -1,3 +1,5 @@
+Name: Kian Kolahdoozan
+Matr.-Nr.: 46824
 Projekt: 
 Korrekte wissenschaftliche Vorgehensweise 
 (Grundlegend verwendete Literatur aufgezeigt, Wenn Einsatz KI: Zitiert) 
@@ -9,19 +11,24 @@ Code
 
 Problemstellung:
 
-Das Wedding Seating Problem befasst sich mit der Verteilung von Gästen auf begrenzte Menge an Sitzplätzen bei einer Hochzeit. Dabei sollen die Beziehungen der Gäste berücksichtigt werden, damit alle Freunde an einem Tisch sitzen und die Feinde an einem anderen Tisch.
-Das Ziel ist, dass alle Gäste zufrieden sind mit ihren Platz und Konflikte zwischen Gästen verhindert wird.
-Es ist ein Optiemierungsproblem, wo eine heuristische Lösung in Betracht kommt.
+Das Wedding Seating Problem befasst sich mit der Verteilung von Gästen auf eine begrenzte Menge an Sitzplätzen bei einer Hochzeit. Dabei sollen die Beziehungen der Gäste berücksichtigt werden, damit alle Freunde an einem Tisch sitzen und die Feinde an einem anderen Tisch.
+Das Ziel ist es, dass alle Gäste mit ihren Platz zufrieden sind und Konflikte zwischen Gästen verhindert werden.
+Es ist ein Optimierungsproblem, bei welchem eine heuristische Lösung in Betracht kommt.
 
 Vorgehensweise:
-
-Der Gast mit den meisten Beziehungen wird an ein Tisch zugeordnet.
+Die Datei mit den Gäste, Freunde und Feinde wird gelesen.
+Eine Relationshipmatrix wird anhand der Beziehungen erstellt.
+Die Liste mit den Gästen wird anhand der Anzahl der Beziehungen absteigend sotiert.
+Der Gast mit den meisten Beziehungen wird einem Tisch zugeordnet.
 Dann wird der Gast mit den zweitmeisten Beziehungen zugeordnet, unter der Bedingung, dass es kein Feind ist (no enemy).
-Wenn das Tisch voll mit Gästen sind, die keine Feinde sind, wird bei jedem Gast überprüft, ob all die Freunde auch auf dem Tisch sitzen. Wenn ja, dann ist das Tisch mit den Gästen fertig belegt und der nächste Tisch wird mit Gästen belegt.
-Ich habe mich für MCV entschieden, da ich dachte, dass die mit den meisten Beziehung die größten Probleme bereiten, weshalb sie als erstes ein Platz bekommen. Dabei wird erstmal nei der Zuordnung nur darauf geachtet, dass keine Feinde zusammensitzen, da sie wie die Freunde auch einen hohen Anzahl an Beziehungen haben und deshlab weiter vorne in der list als neutrale Kanditaten.
+Wenn der Tisch voll mit Gästen ist, die keine Feinde sind, wird bei jedem Gast überprüft, ob all die Freunde auch an dem Tisch sitzen. Wenn ja, dann ist der Tisch mit den Gästen fertig belegt und der nächste Tisch wird mit Gästen belegt.
+Ich habe mich für MCV entschieden, da ich dachte, dass die mit den meisten Beziehung die größten Probleme bereiten, weshalb sie als erstes ein Platz bekommen. Dabei wird erstmal bei der Zuordnung nur darauf geachtet, dass keine Feinde zusammensitzen, da sie wie die Freunde auch eine hohe Anzahl an Beziehungen haben und deshalb weiter vorne in der Liste als neutrale Kanditaten.
 Dadurch sollte sich die Wahrscheinlichkeit erhöhen, dass Freunde zusammengesetzt werden. Mit der Nachbedingung, dass falls doch nicht alle Freunde zusammensitzen, wird kontrolliert
 
-Im Nachhinein wurde ich MRV nutzen, da es effiezenter ist, den Gast mit den wenigsten Möglichkeiten als erstes zu setzen und dann die anderen, die mehr Auswahl haben. Mit MCV funktioniert es auch, aber im schlimmsten Fall probiert der Code alle Möglichkeiten aus, bis es (k)eine Lösung findet.
+Im Nachhinein würde ich erst MRV und dann MCV zusammen nutzen, da es effizienter ist, den Gast mit den wenigsten Möglichkeiten als erstes zu setzen und dann die anderen, die mehr Auswahl haben. Eine Kombination der heuristischen Funktionen wäre sinnvoll, falls bei einer der heuristischen Funktion zwei gleiche Werte rauskommt und die Reihenfolge nicht klar ist. Da kann die zweite heuristische Funktion die genaue Reihenfolge besser ermitteln.
+Mit nur MCV funktioniert es auch, aber im schlimmsten Fall probiert der Code alle Möglichkeiten aus, bis es (k)eine Lösung findet.
+
+Falls ein Paar in der txt-Datei als Freunde und als Feinde eingegeben wird, werden die nur als Feinde dargestellt. Bei der manuellen Eingabe wird die Beziehung übernohmen, die als letztes hinzugefügt wurde.
 
 Verwenden eines CSPs:
 1) Wie wird das CSP modelliert 
@@ -31,18 +38,19 @@ Verwenden eines CSPs:
 5) Wie modellieren Sie die friends/enemy Beziehung? 
 
 1)
-
 17 Gäste und vier Tische mit jeweils fünf Plätzen
+Variablen: {T1, T2, T3, T4, T5}
+Domain: {x01, x02, x03, x04, x05, x06, x07, x08, x09, x10, x11, x12, x13, x14, x15, x16, x17}
+
 T1 = {x01, x02, x03, x04, x05, x06, x07, x08, x09, x10, x11, x12, x13, x14, x15, x16, x17}
 T2 = {x01, x02, x03, x04, x05, x06, x07, x08, x09, x10, x11, x12, x13, x14, x15, x16, x17}
 T3 = {x01, x02, x03, x04, x05, x06, x07, x08, x09, x10, x11, x12, x13, x14, x15, x16, x17}
 T4 = {x01, x02, x03, x04, x05, x06, x07, x08, x09, x10, x11, x12, x13, x14, x15, x16, x17}
 T5 = {x01, x02, x03, x04, x05, x06, x07, x08, x09, x10, x11, x12, x13, x14, x15, x16, x17}
-Friends = {x01&x02, x12&x13, x06&x11} -> Tisch x01 = Tisch x02
-Enemies = {x04&x05, x14&x16, x07&x15} -> Tisch x04 != Tisch x05
-
+Beispielhafte Einschränkungen (Constrains), die dann ein Einfluss auf die Zuweisung der Tische haben:
+Friends = {x01=x02, x12=x13, x06=x11} -> Tisch x01 = Tisch x02, Tisch x12 = Tisch x13, Tisch x06 = Tisch x11
+Enemies = {x04!=x05, x14!=x16, x07!=x15} -> Tisch x04 != Tisch x05, Tisch x14 != Tisch x16, Tisch x07 != Tisch x15
 2)
-
 States:
 
 T1 = {x01}
@@ -82,7 +90,7 @@ T4 = {}
 T5 = {}
 
 usw. (sonst die PrintTables() Funktion in AssignSeatingHelper auskommentieren)
-
+Änderungen verlaufen rekursiv durch AssignSeatingHelper und wird durch das Backtracking zurückgesetzt, falls es zu Konflikten kommt.
 3)
 
 Erfolgsfall: Seating arrangement found: {Ergebnis}
@@ -91,13 +99,15 @@ Fehlerfall je nach Fehlermeldung, sonst im Allgemeinen: Unable to seat all guest
 4)
 
 MCV
+Gäste werden nach der Anzahl ihrer Beziehungen (Freunde und Feinde) absteigend sortiert (FindMCV). Gäste mit den meisten Beziehungen (Constrains) werden zuerst gesetzt.
 Was passiert wenn zwei gleich viele Beziehung haben? --> Testen
-Greedy best-first search
-f(n) = 0 + h(n)
+
 
 5)
 
 Die friends und enemies Beziehung werden in einer Matrix festgehalten.
+Hier beispielsweise für fünf Gäste:
+
 int[,] relationshipMatrix = new int[guests.Count, guests.Count]
 {
     { 0,  1,  0, -1,  0 },      //  0 = neutral
